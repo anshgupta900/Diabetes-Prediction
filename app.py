@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import joblib
@@ -152,5 +151,3 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
         )
 
 st.divider()
-
-
