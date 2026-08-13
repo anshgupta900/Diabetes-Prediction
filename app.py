@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import joblib
@@ -8,7 +9,11 @@ st.set_page_config(
     layout="centered"
 )
 
-model = joblib.load("best_diabetes_model.pkl")
+try:
+    model = joblib.load("best_diabetes_model.pkl")
+except FileNotFoundError:
+    st.error("Model file 'best_diabetes_model.pkl' not found. Please make sure it is in the same folder as this app.")
+    st.stop()
 
 st.title("🩺 Diabetes Prediction")
 st.write("Enter the patient's health information below.")
@@ -134,6 +139,19 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
         ]
     })
 
+    # Ensure column order matches what the model was trained on
+    if hasattr(model, "feature_names_in_"):
+        input_data = input_data.reindex(columns=model.feature_names_in_, fill_value=0)
+    else:
+        training_column_order = [
+            "Age", "Gender_Male", "BMI", "Glucose", "Blood_Pressure",
+            "Cholesterol", "Insulin", "HbA1c",
+            "Smoking_Status_Former", "Smoking_Status_Never",
+            "Physical_Activity_Low", "Physical_Activity_Moderate",
+            "Family_History_Yes"
+        ]
+        input_data = input_data.reindex(columns=training_column_order, fill_value=0)
+
     prediction = model.predict(input_data)[0]
 
     st.subheader("Prediction Result")
@@ -150,4 +168,17 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
             "The model predicts that the patient may not have diabetes."
         )
 
+    if hasattr(model, "predict_proba"):
+
+        probability = model.predict_proba(input_data)[0]
+
+        diabetes_probability = probability[1] * 100
+
+        st.metric(
+            "Diabetes Probability",
+            f"{diabetes_probability:.2f}%"
+        )
+
 st.divider()
+
+
