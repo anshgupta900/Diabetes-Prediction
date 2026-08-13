@@ -201,17 +201,13 @@ for name, model in models.items():
 
 best_model_name = max(results, key=results.get)
 
-# Get the actual trained model
 best_model = models[best_model_name]
 
-# Get accuracy
 best_accuracy = results[best_model_name]
 
 print("Best Model:", best_model_name)
 print("Best Accuracy:", best_accuracy * 100, "%")
 
-
-# Save the actual trained model
 import joblib
 
 joblib.dump(
@@ -223,3 +219,13 @@ print("Best model saved successfully!")
 model = joblib.load('best_diabetes_model.pkl')
 
 print(type(model))
+
+from sklearn.metrics import classification_report, confusion_matrix
+
+best_y_pred = models[best_model_name].predict(X_test)
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, best_y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, best_y_pred))
