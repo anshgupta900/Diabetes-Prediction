@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import joblib
@@ -167,18 +166,6 @@ if st.button("🔍 Predict Diabetes", use_container_width=True):
         st.info(
             "The model predicts that the patient may not have diabetes."
         )
-
-    if hasattr(model, "predict_proba"):
-
-        probability = model.predict_proba(input_data)[0]
-
-        diabetes_probability = probability[1] * 100
-
-        st.metric(
-            "Diabetes Probability",
-            f"{diabetes_probability:.2f}%"
-        )
-
 st.divider()
 
 
